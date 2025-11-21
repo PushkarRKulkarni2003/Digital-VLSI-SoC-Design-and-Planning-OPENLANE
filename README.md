@@ -1,3 +1,30 @@
+# PicoRV32a ASIC Flow (RTL → GDSII) Using SkyWater SKY130
+# Commands to launch OPENLANE
+```bash
+cd Desktop/work/tools/openlane_working_dir/openlane
+unalias docker
+docker run -it -v "$(pwd):/openLANE_flow" -v "$PDK_ROOT:$PDK_ROOT" -e PDK_ROOT="$PDK_ROOT" -u "$(id -u):$(id -g)" efabless/openlane:v0.21
+./flow.tcl -interactive
+package require openlane 0.9
+prep -design picorv32a
+```
+# Spice Simulations
+
+```bash
+# Clone custom inverter standard cell design from github repository
+cd Desktop/work/tools/openlane_working_dir/openlane
+git clone https://github.com/nickson-jose/vsdstdcelldesign
+cd vsdstdcelldesign
+cp /home/vsduser/Desktop/work/tools/openlane_working_dir/pdks/sky130A/libs.tech/magic/sky130A.tech .
+magic -T sky130A.tech sky130_inv.mag &
+# Spice extraction of inverter in magic.
+extract all
+ext2spice cthresh 0 rthresh 0
+ext2spice
+# Commands for ngspice simulation
+ngspice sky130_inv.spice
+plot y vs time a
+```
 Spice Simulation
 ![WhatsApp Image 2025-11-18 at 22 32 37_8b9d00d3](https://github.com/user-attachments/assets/1afde377-a0de-4857-8ba8-3a19204907a7)
 ![WhatsApp Image 2025-11-18 at 22 47 03_f04e4432](https://github.com/user-attachments/assets/8a1f257a-5350-459e-b053-1041a0e1ffba)
